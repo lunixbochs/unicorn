@@ -393,6 +393,8 @@ uc_err uc_emu_stop(uc_engine *uc);
  @uc: handle returned by uc_open()
  @hh: hook handle returned from this registration. To be used in uc_hook_del() API
  @type: hook type
+ @begin: starting memory address to hook.
+ @end: ending memory address to hook. If begin > end, all addresses will be hooked.
  @callback: callback to be run when instruction is hit
  @user_data: user-defined data. This will be passed to callback function in its
       last argument @user_data
@@ -402,7 +404,7 @@ uc_err uc_emu_stop(uc_engine *uc);
  for detailed error).
 */
 UNICORN_EXPORT
-uc_err uc_hook_add(uc_engine *uc, uc_hook *hh, int type, void *callback, void *user_data, ...);
+uc_err uc_hook_add(uc_engine *uc, uc_hook *hh, int type, uint64_t begin, uint64_t end, void *callback, void *user_data, ...);
 
 /*
  Unregister (remove) a hook callback.

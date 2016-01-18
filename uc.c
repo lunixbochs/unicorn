@@ -531,7 +531,7 @@ uc_err uc_emu_start(uc_engine* uc, uint64_t begin, uint64_t until, uint64_t time
     }
     // set up count hook to count instructions.
     if (count > 0 && uc->count_hook == 0) {
-        uc_err err = uc_hook_add(uc, &uc->count_hook, UC_HOOK_CODE, hook_count_cb, NULL);
+        uc_err err = uc_hook_add(uc, &uc->count_hook, UC_HOOK_CODE, 1, 0, hook_count_cb, NULL);
         if (err != UC_ERR_OK) {
             return err;
         }
@@ -932,12 +932,11 @@ MemoryRegion *memory_mapping(struct uc_struct* uc, uint64_t address)
 }
 
 UNICORN_EXPORT
-uc_err uc_hook_add(uc_engine *uc, uc_hook *hh, int type, void *callback, void *user_data, ...)
+uc_err uc_hook_add(uc_engine *uc, uc_hook *hh, int type, uint64_t begin, uint64_t end, void *callback, void *user_data, ...)
 {
     va_list valist;
+    int i;
     int ret = UC_ERR_OK;
-
-    va_start(valist, user_data);
 
     struct hook *hook = calloc(1, sizeof(struct hook));
     if (hook == NULL) {
@@ -949,22 +948,13 @@ uc_err uc_hook_add(uc_engine *uc, uc_hook *hh, int type, void *callback, void *u
     hook->refs = 0;
     *hh = (uc_hook)hook;
 
-    // everybody but HOOK_INSN gets begin/end, so exit early here.
-    if (type & UC_HOOK_INSN) {
+    if (i & UC_HOOK_INSN_IDX) {
+        va_start(valist, user_data);
         hook->insn = va_arg(valist, int);
-        if (list_append(&uc->hook[UC_HOOK_INSN_IDX], hook) == NULL) {
-            free(hook);
-            return UC_ERR_NOMEM;
-        }
-        hook->refs++;
-        return UC_ERR_OK;
+        va_end(valist);
     }
 
-    hook->begin = va_arg(valist, uint64_t);
-    hook->end = va_arg(valist, uint64_t);
-    va_end(valist);
-
-    int i = 0;
+    i = 0;
     while ((type >> i) > 0) {
         if ((type >> i) & 1) {
             // TODO: invalid hook error?
@@ -973,6 +963,7 @@ uc_err uc_hook_add(uc_engine *uc, uc_hook *hh, int type, void *callback, void *u
                     if (hook->refs == 0) {
                         free(hook);
                     }
+                    va_end(valist);
                     return UC_ERR_NOMEM;
                 }
                 hook->refs++;
