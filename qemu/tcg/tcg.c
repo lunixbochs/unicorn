@@ -959,7 +959,7 @@ void tcg_gen_qemu_ld_i32(struct uc_struct *uc, TCGv_i32 val, TCGv addr, TCGArg i
     *tcg_ctx->gen_opparam_ptr++ = memop;
     *tcg_ctx->gen_opparam_ptr++ = idx;
 
-    check_exit_request(tcg_ctx);
+    // check_exit_request(tcg_ctx);
 }
 
 void tcg_gen_qemu_st_i32(struct uc_struct *uc, TCGv_i32 val, TCGv addr, TCGArg idx, TCGMemOp memop)
@@ -974,7 +974,7 @@ void tcg_gen_qemu_st_i32(struct uc_struct *uc, TCGv_i32 val, TCGv addr, TCGArg i
     *tcg_ctx->gen_opparam_ptr++ = memop;
     *tcg_ctx->gen_opparam_ptr++ = idx;
 
-    check_exit_request(tcg_ctx);
+    // check_exit_request(tcg_ctx);
 }
 
 void tcg_gen_qemu_ld_i64(struct uc_struct *uc, TCGv_i64 val, TCGv addr, TCGArg idx, TCGMemOp memop)
@@ -992,7 +992,7 @@ void tcg_gen_qemu_ld_i64(struct uc_struct *uc, TCGv_i64 val, TCGv addr, TCGArg i
             tcg_gen_movi_i32(tcg_ctx, TCGV_HIGH(val), 0);
         }
 
-        check_exit_request(tcg_ctx);
+        // check_exit_request(tcg_ctx);
         return;
     }
 #endif
@@ -1003,7 +1003,7 @@ void tcg_gen_qemu_ld_i64(struct uc_struct *uc, TCGv_i64 val, TCGv addr, TCGArg i
     *tcg_ctx->gen_opparam_ptr++ = memop;
     *tcg_ctx->gen_opparam_ptr++ = idx;
 
-    check_exit_request(tcg_ctx);
+    // check_exit_request(tcg_ctx);
 }
 
 void tcg_gen_qemu_st_i64(struct uc_struct *uc, TCGv_i64 val, TCGv addr, TCGArg idx, TCGMemOp memop)
@@ -1015,7 +1015,7 @@ void tcg_gen_qemu_st_i64(struct uc_struct *uc, TCGv_i64 val, TCGv addr, TCGArg i
 #if TCG_TARGET_REG_BITS == 32
     if ((memop & MO_SIZE) < MO_64) {
         tcg_gen_qemu_st_i32(uc, TCGV_LOW(val), addr, idx, memop);
-        check_exit_request(tcg_ctx);
+        // check_exit_request(tcg_ctx);
         return;
     }
 #endif
@@ -1026,7 +1026,7 @@ void tcg_gen_qemu_st_i64(struct uc_struct *uc, TCGv_i64 val, TCGv addr, TCGArg i
     *tcg_ctx->gen_opparam_ptr++ = memop;
     *tcg_ctx->gen_opparam_ptr++ = idx;
 
-    check_exit_request(tcg_ctx);
+    // check_exit_request(tcg_ctx);
 }
 
 static void tcg_reg_alloc_start(TCGContext *s)
