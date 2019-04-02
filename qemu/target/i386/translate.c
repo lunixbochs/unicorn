@@ -2403,6 +2403,7 @@ static inline void gen_goto_tb(DisasContext *s, int tb_num, target_ulong eip)
         s->base.is_jmp = DISAS_NORETURN;
     } else {
         /* jump to another page */
+        gen_jmp_im(s, eip);
         gen_jr(s, s->tmp0);
     }
 }
